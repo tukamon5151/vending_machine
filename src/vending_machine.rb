@@ -30,6 +30,7 @@ class VendingMachine
     return unless juice_stock && juice_stock.buy(@input_amount)
     @sales_amount += juice_stock.price
     @input_amount -= juice_stock.price
+    return_money
   end
 
   def juice_stock_information
