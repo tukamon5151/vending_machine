@@ -1,12 +1,17 @@
+require '../src/juice_stock'
+
 class VendingMachine
   USABLE_MONEY = [10, 50, 100, 500, 1000].freeze
-  attr_reader :input_amount, :sales_amount
-  COLA_PRICE = 120
+  attr_reader :input_amount, :sales_amount, :juice_stocks
 
   def initialize
     @input_amount = 0
     @sales_amount = 0
-    @cola_stock = 5
+    @juice_stocks = [
+      JuiceStock.new('コーラ', 120, 5),
+      JuiceStock.new('レッドブル', 200, 5),
+      JuiceStock.new('水', 100, 5)
+    ]
   end
 
   def add_money(money)
@@ -20,33 +25,29 @@ class VendingMachine
     tmp_total_money
   end
 
-  def buy
-    return unless buyable?
-    @cola_stock -= 1
-    @sales_amount += COLA_PRICE
-    @input_amount -= COLA_PRICE
-  end
-
-  def buyable?
-    stock_available? && has_enough_money?
+  def buy(juice_name)
+    juice_stock = find_juice_stock(juice_name)
+    return unless juice_stock && juice_stock.buy(@input_amount)
+    @sales_amount += juice_stock.price
+    @input_amount -= juice_stock.price
   end
 
   def juice_stock_information
-    {
-      name: 'コーラ',
-      price: COLA_PRICE,
-      stock: @cola_stock
-    }
+    juice_stocks.map(&:to_h)
+  end
+
+  def buyable_juice_list
+    buyable_juice_stocks.map(&:name)
   end
 
   private
 
-  def stock_available?
-    @cola_stock.positive?
+  def buyable_juice_stocks
+    juice_stocks.select { |juice_stock| juice_stock.buyable?(@input_amount) }
   end
 
-  def has_enough_money?
-    COLA_PRICE < @input_amount
+  def find_juice_stock(juice_name)
+    juice_stocks.find { |juice_stock| juice_stock.name == juice_name }
   end
 
   def usable_money?(money)
