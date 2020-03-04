@@ -14,3 +14,5 @@ puts vending_machine.input_amount
 
 puts vending_machine.add_money(10000)
 puts vending_machine.input_amount
+
+puts vending_machine.juice_stock_information

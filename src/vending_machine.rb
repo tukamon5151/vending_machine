@@ -13,8 +13,16 @@ class VendingMachine
 
   def return_money
     tmp_total_money = @input_amount
-    @input_amount = 0
+    @input_amount   = 0
     tmp_total_money
+  end
+
+  def juice_stock_information
+    {
+      name: 'コーラ',
+      price: 120,
+      stock: 5
+    }
   end
 
   private
